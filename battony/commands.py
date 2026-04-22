@@ -90,7 +90,12 @@ async def cmd_connect(app: "BattonYApp", ctx: CommandContext) -> None:
         app.status_write("usage: /connect <host[:port]> [--tls/--no-tls] [--name NAME]", error=True)
         return
     hostport = ctx.args[0]
-    host, _, port_s = hostport.partition(":")
+    # IPv6 literals must be bracketed when a port is attached: [2001:db8::1]:6697
+    if hostport.startswith("["):
+        host, sep, rest = hostport[1:].partition("]")
+        port_s = rest[1:] if sep and rest.startswith(":") else ""
+    else:
+        host, _, port_s = hostport.partition(":")
     port = int(port_s) if port_s else 6697
     tls = True
     name = host

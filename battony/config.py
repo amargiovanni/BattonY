@@ -68,6 +68,8 @@ def ensure_config() -> Path:
     CONFIG_DIR.mkdir(parents=True, exist_ok=True)
     LOG_DIR.mkdir(parents=True, exist_ok=True)
     if not CONFIG_PATH.exists():
+        # The config may hold SASL passwords — restrict to the current user.
+        CONFIG_PATH.touch(mode=0o600)
         CONFIG_PATH.write_text(DEFAULT_CONFIG, encoding="utf-8")
     return CONFIG_PATH
 

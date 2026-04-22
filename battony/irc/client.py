@@ -126,10 +126,12 @@ class IRCClient:
                 line = await self._reader.readline()
                 if not line:
                     break
+                # Prefer strict UTF-8 so we get clean text on modern networks;
+                # fall back to latin-1 (which never fails) for legacy ones.
                 try:
-                    text = line.decode("utf-8", errors="replace").rstrip("\r\n")
-                except Exception:
-                    continue
+                    text = line.decode("utf-8").rstrip("\r\n")
+                except UnicodeDecodeError:
+                    text = line.decode("latin-1").rstrip("\r\n")
                 if not text:
                     continue
                 msg = Message.parse(text)
@@ -341,7 +343,9 @@ class IRCClient:
         if not (self.config.sasl_user and self.config.sasl_pass):
             return
         if msg.params and msg.params[0] == "+":
-            payload = f"{self.config.sasl_user}\0{self.config.sasl_user}\0{self.config.sasl_pass}"
+            # RFC 4616: [authzid] \0 authcid \0 passwd — leaving authzid empty
+            # is the maximally compatible form.
+            payload = f"\0{self.config.sasl_user}\0{self.config.sasl_pass}"
             encoded = base64.b64encode(payload.encode("utf-8")).decode("ascii")
             # Must be split into 400-byte chunks per spec.
             for i in range(0, len(encoded), 400):
