@@ -1,0 +1,66 @@
+/* BattonY theme — dark, neon-ish, comfortable for long sessions. */
+
+Screen {
+    background: $background;
+    color: $text;
+    layers: base overlay;
+}
+
+#main {
+    layout: vertical;
+}
+
+#main-row {
+    height: 1fr;
+    layout: horizontal;
+}
+
+TopicBar {
+    dock: top;
+}
+
+StatusBar {
+    dock: bottom;
+}
+
+InputBar {
+    dock: bottom;
+}
+
+#chat-wrap {
+    width: 1fr;
+    layout: vertical;
+}
+
+ChatView {
+    height: 1fr;
+}
+
+BufferTree {
+    border-title-align: center;
+}
+
+NickList {
+    border-title-align: center;
+}
+
+#splash {
+    width: 1fr;
+    height: 1fr;
+    align: center middle;
+    content-align: center middle;
+    padding: 1 2;
+    background: $surface;
+}
+
+HelpScreen {
+    align: center middle;
+}
+
+#help-panel {
+    background: $surface;
+    border: thick $primary;
+    padding: 1 2;
+    width: 80;
+    height: 30;
+}
